@@ -9,21 +9,33 @@ function App() {
     const dispatch = useDispatch();
 
     return (
-        <div className="App" style={{ padding: '20px', fontFamily: 'Arial' }}>
-            <nav style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-                <Link to="/" style={{ fontSize: '24px', textDecoration: 'none', fontWeight: 'bold' }}>
-                    Weather App
-                </Link>
-                <button onClick={() => dispatch(toggleUnit())}>
-                    Jednostka: °{unit}
-                </button>
+        <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
+            {/* Pasek nawigacji */}
+            <nav className="bg-white shadow-sm sticky top-0 z-10">
+                <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+                    <Link
+                        to="/"
+                        className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors"
+                    >
+                        Weather App
+                    </Link>
+
+                    <button
+                        onClick={() => dispatch(toggleUnit())}
+                        className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-colors text-sm sm:text-base"
+                    >
+                        Jednostka: <span className="font-bold">°{unit}</span>
+                    </button>
+                </div>
             </nav>
 
-            <Routes>
-                <Route path="/" element={<Dashboard />} />
-                {/* Parametr URL :id pozwoli zidentyfikować miasto */}
-                <Route path="/city/:id" element={<CityDetails />} />
-            </Routes>
+            {/* Główna zawartość */}
+            <main className="container mx-auto px-4 py-8">
+                <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/city/:id" element={<CityDetails />} />
+                </Routes>
+            </main>
         </div>
     );
 }

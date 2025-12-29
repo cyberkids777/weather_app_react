@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { citiesData } from '../data/mockData';
 import { useSelector } from 'react-redux';
 
-// Helper do konwersji (będziesz go używał często)
 const convertTemp = (temp, unit) => {
     if (unit === 'F') return Math.round(temp * 1.8 + 32);
     if (unit === 'K') return Math.round(temp + 273.15);
@@ -11,7 +10,7 @@ const convertTemp = (temp, unit) => {
 };
 
 const Dashboard = () => {
-    const [searchTerm, setSearchTerm] = useState(''); // Na ocenę 4.0
+    const [searchTerm, setSearchTerm] = useState('');
     const unit = useSelector((state) => state.settings.unit);
 
     const filteredCities = citiesData.filter(city =>
@@ -20,27 +19,49 @@ const Dashboard = () => {
 
     return (
         <div>
-            <input
-                type="text"
-                placeholder="Szukaj miasta..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{ padding: '10px', width: '100%', marginBottom: '20px' }}
-            />
+            {/* Sekcja wyszukiwania */}
+            <div className="mb-8 max-w-md mx-auto sm:mx-0">
+                <input
+                    type="text"
+                    placeholder="Szukaj miasta..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full p-3 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                />
+            </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px' }}>
+            {/* Responsywna siatka (Grid) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filteredCities.map((city) => (
-                    <div key={city.id} style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '8px' }}>
-                        <h3>{city.name}</h3>
-                        <p>Temp: {convertTemp(city.temp, unit)}°{unit}</p>
-                        <p>Warunki: {city.condition}</p>
-                        {/* Link do szczegółów  */}
-                        <Link to={`/city/${city.id}`}>
-                            <button style={{ marginTop: '10px' }}>Szczegóły</button>
+                    <div
+                        key={city.id}
+                        className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-100 flex flex-col justify-between"
+                    >
+                        <div>
+                            <div className="flex justify-between items-start mb-4">
+                                <h3 className="text-xl font-bold text-slate-800">{city.name}</h3>
+                                <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                  {city.condition}
+                </span>
+                            </div>
+
+                            <div className="text-4xl font-bold text-slate-900 mb-2">
+                                {convertTemp(city.temp, unit)}°{unit}
+                            </div>
+                        </div>
+
+                        <Link to={`/city/${city.id}`} className="mt-4 block">
+                            <button className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+                                Szczegóły
+                            </button>
                         </Link>
                     </div>
                 ))}
             </div>
+
+            {filteredCities.length === 0 && (
+                <p className="text-center text-slate-500 mt-10">Nie znaleziono miast pasujących do wyszukiwania.</p>
+            )}
         </div>
     );
 };
