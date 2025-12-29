@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { citiesData } from '../data/mockData';
 import { useSelector } from 'react-redux';
 
+// 1. IMPORTUJEMY KOMPONENT IKONY
+import { WeatherIcon } from '../components/WeatherIcon';
+
 const convertTemp = (temp, unit) => {
     if (unit === 'F') return Math.round(temp * 1.8 + 32);
     if (unit === 'K') return Math.round(temp + 273.15);
@@ -38,11 +41,21 @@ const Dashboard = () => {
                         className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-100 flex flex-col justify-between"
                     >
                         <div>
+                            {/* ZMODYFIKOWANA SEKCJA NAGŁÓWKA KARTY */}
                             <div className="flex justify-between items-start mb-4">
-                                <h3 className="text-xl font-bold text-slate-800">{city.name}</h3>
-                                <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
-                  {city.condition}
-                </span>
+                                <div>
+                                    <h3 className="text-xl font-bold text-slate-800">{city.name}</h3>
+                                    {/* Tekstowy opis pogody pod nazwą miasta */}
+                                    <span className="text-slate-500 text-sm font-medium">
+                                        {city.condition}
+                                    </span>
+                                </div>
+
+                                {/* 2. UŻYCIE IKONY (zamiast starego badge'a) */}
+                                <WeatherIcon
+                                    condition={city.condition}
+                                    className="w-10 h-10 drop-shadow-sm"
+                                />
                             </div>
 
                             <div className="text-4xl font-bold text-slate-900 mb-2">
