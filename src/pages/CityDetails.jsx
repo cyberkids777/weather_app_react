@@ -1,48 +1,89 @@
 import { useParams, Link } from 'react-router-dom';
 import { citiesData } from '../data/mockData';
 import { useSelector } from 'react-redux';
+import { ArrowLeft, Wind, CloudRain, Cloud } from 'lucide-react'; // Zakładam, że zainstalowałeś lucide-react
 
 const CityDetails = () => {
     const { id } = useParams();
     const unit = useSelector((state) => state.settings.unit);
-
-    // Znajdź miasto po ID
     const city = citiesData.find(c => c.id === parseInt(id));
 
-    if (!city) return <div>Nie znaleziono miasta.</div>;
+    if (!city) return <div className="text-center mt-10 text-xl">Nie znaleziono miasta.</div>;
 
     const convert = (t) => {
-        // Prosta logika konwersji w miejscu (można wydzielić do utils)
         if (unit === 'F') return Math.round(t * 1.8 + 32);
         if (unit === 'K') return Math.round(t + 273.15);
         return t;
     };
 
     return (
-        <div>
-            <Link to="/">&larr; Wróć do listy</Link>
-            <h1>{city.name}</h1>
+        <div className="max-w-4xl mx-auto">
+            <Link
+                to="/"
+                className="inline-flex items-center text-slate-500 hover:text-blue-600 mb-6 transition-colors"
+            >
+                <ArrowLeft size={20} className="mr-2" />
+                Wróć do listy
+            </Link>
 
-            <div style={{ display: 'flex', gap: '20px', marginBottom: '30px' }}>
-                <div>
-                    <h2>{convert(city.temp)}°{unit}</h2>
-                    <p>{city.condition}</p>
+            {/* Główna karta pogodowa */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+                <div className="p-6 md:p-8 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+                    <h1 className="text-3xl md:text-4xl font-bold mb-2">{city.name}</h1>
+                    <p className="opacity-90 text-lg">{city.condition}</p>
                 </div>
-                <div>
-                    {/* Szczegółowe dane [cite: 13, 14, 15] */}
-                    <p>Wiatr: {city.windSpeed} km/h ({city.windDir})</p>
-                    <p>Opady: {city.precipAmount} mm ({city.precipProb}%)</p>
-                    <p>Zachmurzenie: {city.clouds}%</p>
+
+                <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    {/* Temperatura */}
+                    <div>
+            <span className="text-6xl font-bold text-slate-800 tracking-tight">
+              {convert(city.temp)}°{unit}
+            </span>
+                    </div>
+
+                    {/* Szczegóły Grid */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-slate-50 p-4 rounded-xl">
+                            <div className="flex items-center text-slate-500 mb-1">
+                                <Wind size={18} className="mr-2" /> Wiatr
+                            </div>
+                            <p className="font-semibold text-slate-800">{city.windSpeed} km/h</p>
+                            <p className="text-xs text-slate-400">{city.windDir}</p>
+                        </div>
+
+                        <div className="bg-slate-50 p-4 rounded-xl">
+                            <div className="flex items-center text-slate-500 mb-1">
+                                <CloudRain size={18} className="mr-2" /> Opady
+                            </div>
+                            <p className="font-semibold text-slate-800">{city.precipAmount} mm</p>
+                            <p className="text-xs text-slate-400">{city.precipProb}% szans</p>
+                        </div>
+
+                        <div className="bg-slate-50 p-4 rounded-xl col-span-2">
+                            <div className="flex items-center text-slate-500 mb-1">
+                                <Cloud size={18} className="mr-2" /> Zachmurzenie
+                            </div>
+                            <p className="font-semibold text-slate-800">{city.clouds}%</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <h3>Prognoza na 5 dni [cite: 12]</h3>
-            <div style={{ display: 'flex', gap: '10px' }}>
+            {/* Sekcja Prognozy */}
+            <h3 className="text-xl font-bold text-slate-800 mb-4">Prognoza na 5 dni</h3>
+
+            {/* Grid: 2 kolumny na mobile, 3 na tabletach, 5 na desktopie */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
                 {city.forecast?.map((day, index) => (
-                    <div key={index} style={{ border: '1px solid #eee', padding: '10px' }}>
-                        <strong>{day.day}</strong>
-                        <p>{convert(day.temp)}°{unit}</p>
-                        <p>{day.condition}</p>
+                    <div
+                        key={index}
+                        className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center text-center hover:-translate-y-1 transition-transform duration-200"
+                    >
+                        <span className="text-slate-500 font-medium mb-2">{day.day}</span>
+                        <span className="text-2xl font-bold text-slate-800 mb-1">
+              {convert(day.temp)}°
+            </span>
+                        <span className="text-sm text-slate-400">{day.condition}</span>
                     </div>
                 ))}
             </div>
