@@ -23,10 +23,6 @@ export const getWeatherData = async (cityName) => {
         // KROK A: GEOCODING
         const { lat, lon, name } = await getCoordinates(cityName);
 
-        // KROK B: POGODA (Tutaj używamy standardowego API 2.5, bo jest bezpieczniejsze dla darmowych kont)
-        // Jeśli masz OneCall 3.0, endpoint wyglądałby tak:
-        // https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly&units=metric&appid=${API_KEY}
-
         const [weatherRes, forecastRes] = await Promise.all([
             axios.get(`${BASE_URL}/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`),
             axios.get(`${BASE_URL}/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`)
@@ -57,7 +53,7 @@ export const getWeatherData = async (cityName) => {
         // Formatujemy dane do widoku
         return {
             id: current.id, // OWM ID
-            name: name, // Używamy nazwy z Geocodingu (jest ładniejsza)
+            name: name,
             lat: lat,
             lon: lon,
             temp: Math.round(current.main.temp),

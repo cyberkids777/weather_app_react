@@ -1,8 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const getInitialFavorites = () => {
+    try {
+        const stored = localStorage.getItem('weatherAppFavorites');
+        return stored ? JSON.parse(stored) : [];
+    } catch (error) {
+        console.error("Błąd odczytu localStorage:", error);
+        return [];
+    }
+};
+
 const initialState = {
-    unit: 'C', // C, F, K
-    favorites: [] // Na ocenę 4.5 [cite: 43]
+    unit: 'C',
+    favorites: getInitialFavorites()
 };
 
 export const settingsSlice = createSlice({
@@ -10,14 +20,29 @@ export const settingsSlice = createSlice({
     initialState,
     reducers: {
         toggleUnit: (state) => {
-            // Prosta logika przełączania C -> F -> K -> C
             if (state.unit === 'C') state.unit = 'F';
             else if (state.unit === 'F') state.unit = 'K';
             else state.unit = 'C';
         },
-        // Tu dodasz akcje addToFavorites na wyższą ocenę
+        toggleFavorite: (state, action) => {
+            const cityToAdd = action.payload;
+            const existsIndex = state.favorites.findIndex(city => city.name === cityToAdd.name);
+
+            if (existsIndex >= 0) {
+                state.favorites.splice(existsIndex, 1);
+            } else {
+                state.favorites.push({
+                    id: cityToAdd.id,
+                    name: cityToAdd.name,
+                    temp: cityToAdd.temp,
+                    condition: cityToAdd.condition
+                });
+            }
+
+            localStorage.setItem('weatherAppFavorites', JSON.stringify(state.favorites));
+        }
     },
 });
 
-export const { toggleUnit } = settingsSlice.actions;
+export const { toggleUnit, toggleFavorite } = settingsSlice.actions;
 export default settingsSlice.reducer;

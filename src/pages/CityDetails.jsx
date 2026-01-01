@@ -6,7 +6,6 @@ import { WeatherIcon } from '../components/WeatherIcon';
 import { getWeatherData } from '../api/weather';
 
 const CityDetails = () => {
-    // ZMIANA: odbieramy cityName zamiast id
     const { cityName } = useParams();
     const unit = useSelector((state) => state.settings.unit);
     const [city, setCity] = useState(null);
